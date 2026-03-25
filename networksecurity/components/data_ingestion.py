@@ -78,10 +78,6 @@ class DataIngestion:
             data_ingestion_artifacts = DataIngestionArtifact(trained_file_path=self.data_ingestion_config.training_file_path,
                                                              test_file_path=self.data_ingestion_config.testing_file_path)
 
-            return (
-                data_ingestion_artifacts.trained_file_path,
-                data_ingestion_artifacts.test_file_path
-            )
-
+            return data_ingestion_artifacts
         except Exception as e:
             raise CustomException(e,sys)

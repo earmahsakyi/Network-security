@@ -36,5 +36,27 @@ class DataIngestionConfig:
         self.train_test_split_ratio: float = training_pipeline.data_ingestion_train_test_split_ratio
         self.collection_name: str = training_pipeline.data_ingestion_collection_name
         self.database_name: str = training_pipeline.data_ingestion_database_name
+    
+
+class DataValidationConfig:
+    def __init__(self,training_pipeline_config: TrainingPipelineConfig):
+        ##getting artifacts-timestamp/data_validation
+        self.data_validation_dir: str = os.path.join(training_pipeline_config.artifact_dir,training_pipeline.data_validation_dir_name)
+         ##getting artifacts-timestamp/data_validation/validated
+        self.valid_data_dir: str = os.path.join(self.data_validation_dir,training_pipeline.data_validation_valid_dir)
+         ##getting artifacts-timestamp/data_validation/invalid
+        self.invalid_data_dir: str = os.path.join(self.data_validation_dir,training_pipeline.data_validation_invalid_dir)
+         ##getting artifacts-timestamp/data_validation/train.csv
+        self.valid_train_file_path: str = os.path.join(self.data_validation_dir,training_pipeline.train_file_name)
+         ##getting artifacts-timestamp/data_validation/test.csv
+        self.valid_test_file_path: str = os.path.join(self.data_validation_dir,training_pipeline.test_file_name)
+        
+        self.invalid_train_file_path:str = os.path.join(self.data_validation_dir,training_pipeline.train_file_name)
+        self.invalid_test_file_path:str = os.path.join(self.data_validation_dir,training_pipeline.test_file_name)
+        ## getting artifacts-timestamp/drift_report/report.yaml
+        self.drift_report_file_path: str = os.path.join(self.data_validation_dir,
+                                                        training_pipeline.data_validation_drift_report_dir,
+                                                        training_pipeline.data_validation_drift_report_file_name
+                                                        )
 
         

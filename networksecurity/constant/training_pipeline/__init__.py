@@ -20,4 +20,14 @@ file_name: str = 'phisingData.csv'
 
 train_file_name:str = 'train.csv'
 test_file_name:str  = 'test.csv'
+schema_file_path = os.path.join('data_schema','schema.yaml')
+
+
+## Data validation related constants declared below
+data_validation_dir_name:str = 'data_validation'
+data_validation_valid_dir:str = 'validated'
+data_validation_invalid_dir:str = 'invalid'
+data_validation_drift_report_dir:str = 'drift_report'
+data_validation_drift_report_file_name:str = 'report.yaml'
+
 
