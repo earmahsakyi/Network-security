@@ -36,6 +36,9 @@ preprocessing_object_file_name: str = 'preprocessing.pkl'
 data_transformation_transformed_data_dir: str = 'transformed'
 data_transformation_dir_name: str = 'data_transformation'
 data_transformation_transformed_object_dir: str = 'transformed_object'
+data_transformation_train_file_path:str = 'train.npy'
+data_transformation_test_file_path:str = 'test.npy'
+
 
 ##KNN imputer to replace nan values
 data_transformation_imputer_params: dict = {
@@ -43,3 +46,12 @@ data_transformation_imputer_params: dict = {
     'n_neighbors': 3,
     'weights': 'uniform'
 }
+
+## model trainer
+model_trainer_dir_name:str = 'model_trainer'
+model_trainer_trained_model_dir:str = 'trained_model'
+model_trainer_expected_score:float = 0.6
+model_trainer_over_fitting_under_fitting_threshold:float = 0.05
+model_file_name:str = 'model.pkl'
+saved_model_dir:str = os.path.join('saved_models')
+
