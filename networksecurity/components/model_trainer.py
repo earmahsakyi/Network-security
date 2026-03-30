@@ -1,6 +1,7 @@
 import os,sys
 import pandas as pd
 import numpy as np
+import mlflow
 from networksecurity.exception.exception import CustomException
 from networksecurity.logging.logger import logging
 from networksecurity.entity.config_entity import ModelTrainerConfig
@@ -22,6 +23,24 @@ class ModelTrainer:
             self.data_transformation_artifact = data_transformation_artifact
         except Exception as e:
             raise CustomException(e,sys)
+    
+    def tract_mlflow(self,model,classification_metric):
+        try:
+            logging.info('entered ml flow method')
+            with mlflow.start_run():
+                f1_score = classification_metric.f1_score
+                precision_score = classification_metric.precision_score
+                recall_score = classification_metric.recall_score
+
+                mlflow.log_metric('f1_score',f1_score)
+                mlflow.log_metric('precision_score',precision_score)
+                mlflow.log_metric('recall_score',recall_score)
+                mlflow.sklearn.log_model('best model',model)
+
+        except Exception as e:
+            raise CustomException(e,sys)
+
+
     def train_model(self,X_train,y_train,X_test,y_test):
         models = {
                 "Random Forest": RandomForestClassifier(verbose=1),
@@ -70,9 +89,15 @@ class ModelTrainer:
         y_train_pred = best_model.predict(X_train)
         classification_train_metric = get_classification_score(y_true=y_train,y_pred=y_train_pred)
         
-        ##function to track the ml flow
+        ##function to track the ml flow for train dataset
+        self.tract_mlflow(model=best_model_name,classification_metric=classification_train_metric)
+
+
+
         y_test_pred = best_model.predict(X_test)
         classification_test_metric = get_classification_score(y_true=y_test,y_pred=y_test_pred)
+        ##mlflow for test dataset
+        self.tract_mlflow(model=best_model_name,classification_metric=classification_test_metric)
 
         ##preprocessor.pkl file
         object_file_path = self.data_transformation_artifact.transformed_object_file_path
