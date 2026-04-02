@@ -1,6 +1,4 @@
 import os 
-import sys
-import pandas as pd
 import numpy as np
 
 ## Data Ingestion related constant start with data_ingestion var names

@@ -2,6 +2,8 @@ import os,sys
 import pandas as pd
 import numpy as np
 import mlflow
+import dagshub
+from dotenv import load_dotenv
 from networksecurity.exception.exception import CustomException
 from networksecurity.logging.logger import logging
 from networksecurity.entity.config_entity import ModelTrainerConfig
@@ -13,6 +15,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier,GradientBoostingClassifier,RandomForestClassifier
+load_dotenv()
+
+repo_owner = os.getenv('DAGSHUB_USERNAME')
+repo_name = os.getenv('REPO_NAME')
+dagshub.init(repo_owner=repo_owner,repo_name=repo_name,mlflow=True)
 
 
 
@@ -109,6 +116,9 @@ class ModelTrainer:
         Network_Model = NetworkModel(preprocessor=preprocessor,model=best_model)
         model_file_path = self.model_trainer_config.trained_model_file_path
         save_object(file_path=model_file_path,obj=Network_Model)
+        ## saving object to final model dir
+        final_model_path = os.path.join('final_models','model.pkl')
+        save_object(file_path=final_model_path,obj=best_model)
 
         ##Model Trainer artifacts
         model_trainer_artifact = ModelTrainerArtifact(

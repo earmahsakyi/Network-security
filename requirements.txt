@@ -6,6 +6,9 @@ certifi
 pyyaml
 scikit-learn
 mlflow
-pymongo[srv]
+dagshub
+pymongo
+fastapi
+uvicorn
 
 # -e .
