@@ -3,7 +3,9 @@ from networksecurity.components.data_validation import DataValidation
 from networksecurity.components.data_transformation import DataTransformation
 from networksecurity.components.model_trainer import ModelTrainer
 from networksecurity.logging.logger import logging
+from networksecurity.cloud.s3_syncer import S3Sync
 import sys,os
+from networksecurity.constant.training_pipeline import training_bucket_name
 from networksecurity.exception.exception import CustomException
 from networksecurity.entity.config_entity import DataIngestionConfig,DataValidationConfig,DataTransformationConfig,ModelTrainerConfig,TrainingPipelineConfig
 from networksecurity.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact,DataTransformationArtifact,ModelTrainerArtifact
@@ -12,6 +14,7 @@ from networksecurity.entity.artifact_entity import DataIngestionArtifact,DataVal
 class TrainingPipeline:
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()
+        self.s3_sync = S3Sync()
     
     def start_data_ingestion(self):
         try:
@@ -56,13 +59,34 @@ class TrainingPipeline:
         except Exception as e:
             raise CustomException(e,sys)
         
+        ##local artifact folder going to s3 bucket
+    def sync_artifact_dir_to_S3(self):
+        try:
+            aws_bucket_url = f's3://{training_bucket_name}/artifact/{self.training_pipeline_config.timestamp}'
+            self.s3_sync.sync_folder_to_s3(folder = self.training_pipeline_config.artifact_dir,aws_bucket_url=aws_bucket_url)
+        except Exception as e:
+            raise CustomException(e,sys)
+    
+    ## final_models dir going to s3 bucket
+    def sync_saved_model_dir_to_S3(self):
+        try:
+            aws_bucket_url = f's3://{training_bucket_name}/final_models/{self.training_pipeline_config.timestamp}'
+            self.s3_sync.sync_folder_to_s3(folder = self.training_pipeline_config.model_dir,aws_bucket_url=aws_bucket_url)
+        except Exception as e:
+            raise CustomException(e,sys)
+    
+
+
+        
     def run_pipeline(self):
         try:
             data_ingestion_artifact = self.start_data_ingestion()
             data_validation_artifact = self.start_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact = self.start_data_transformation(data_validation_artifact=data_validation_artifact)
             model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
-
+            ##push to s3
+            self.sync_artifact_dir_to_S3()
+            self.sync_saved_model_dir_to_S3()
             return model_trainer_artifact
         except Exception as e:
             raise CustomException(e,sys)

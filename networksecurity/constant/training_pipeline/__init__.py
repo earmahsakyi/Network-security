@@ -53,3 +53,7 @@ model_trainer_over_fitting_under_fitting_threshold:float = 0.05
 model_file_name:str = 'model.pkl'
 saved_model_dir:str = os.path.join('saved_models')
 
+##S3 bucket
+training_bucket_name:str = 'network-security-ml'
+model_dir:str = 'final_models'
+
